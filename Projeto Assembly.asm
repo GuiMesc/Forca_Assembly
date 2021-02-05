@@ -9,9 +9,16 @@ li $v0, 42
 addi $a0, $a0, 1
 addi $a1, $a1, 10
 syscall
+# SE FOR IGUAL A ZERO, SOMA +1 PARA EVITAR LOOP INFINITO
+beq $a1, $zero, else
 add $t1, $zero, $a0	#GUARDA VALOR ALEATORIO GERADO EM $T1
+j arquivo
+else:
+addi $a0, $a0, 1
+add $t1, $zero, $a0
 
 #ABERTURA DE ARQUIVO
+arquivo:
 li $v0, 13
 la $a0, fout
 li $a1, 0
@@ -24,7 +31,8 @@ lb $t2, linha	#GUARDA O CARACTERE LINHA EM $T2
 la $a1, palavra
 j whilePalavra
 whileLinha:
-addi $t4, $t4, 1	#CONTADOR PARA RODAR A MESMA QUANTIDADE DE VEZES DO NUMERO ALEATORIO GERADO
+addi $t4, $t4, 1
+sb $zero, 0($a1)	#CONTADOR PARA RODAR A MESMA QUANTIDADE DE VEZES DO NUMERO ALEATORIO GERADO
 beq $t4, $t1, saiwhile
 la $a1, palavra		#CARREGA O ENDEREÇO NOVAMENTE PARA SOBRESCREVER A PALAVRA QUANDO FOR PARA OUTRA LINHA
  whilePalavra:
