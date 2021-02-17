@@ -2,11 +2,11 @@
 fout: .asciiz "palavras.txt"
 linha: .asciiz "\n"
 apresentacao: .asciiz "\n\n-----JOGO DA FORCA-----\n\n"
-pede.letra: .asciiz "\n\n\nINFORME UMA LETRA:"
+pede.letra: .asciiz "\n\n\nINFORME UMA LETRA: "
 tabulacao: .asciiz "\t\t\t  "
 traco: .asciiz "-"
 vetorAUX: .space 50
-erros: .space 50
+usadas: .space 50
 palavra: .space 50
 letra: .space 1
 
@@ -103,7 +103,7 @@ lb $s2,($t2)
 lb $s3,($t3)
 la $s5, traco
 lb $s6, ($s5)
-la $s7, erros
+la $s7, usadas
 
 pedeLetra:
 li $v0, 4
@@ -114,10 +114,47 @@ li $v0, 8
 la $a0, letra
 syscall
 
-lb $t8, ($a0)
-sb $t8, ($s7)
+lb $t8, ($a0)	#carrega o byte da letra lida
+sb $t8, ($s7)	#guarda o byte no vetor de letras usadas
 li $s1, 1
 li $s4, 0
 la $t3, vetorAUX
 
 verificaçao:
+bne $t8, $t2, proxima	#compara o byte lido com o byte da palavra escolhida, em sua atual posição de memória
+
+certa:
+li $s1, 1
+sb $t8, ($t3)		#guarda a letra lida no VetorAUX
+add $t2, $t2, 1
+add $t3, $t3, 1
+lb $s2,($t2)		#linha 129-132: incrementa os endereços dos vetores e carrega o byte da atual posição pós-incremento
+lb $s3,($t3)
+add $s4, $s4, 1
+beq $s4, $t5, letras
+j verificaçao
+
+proxima:
+add $t2, $t2, 1
+add $t3, $t3, 1
+lb $s2,($t2)
+lb $s3,($t3)
+add $s4, $s4, 1
+beq $s4, $t5, letras
+j verificaçao
+
+letras:
+li $s4, 0
+li $t9, 0
+la $t2, palavra
+la $t3, vetorAUX
+lb $s2,($t2)
+lb $s3,($t3)
+
+utilizadas:
+blt $t7, 61, vitoria
+add $t9, $t9, 1
+add $s7, $s7, 1
+lb $t7, ($s7)
+
+vitoria:
