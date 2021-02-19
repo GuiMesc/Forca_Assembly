@@ -1,14 +1,22 @@
 .data
 fout: .asciiz "palavras.txt"
 linha: .asciiz "\n"
-apresentacao: .asciiz "\n\n-----JOGO DA FORCA-----\n\n"
+apresentacao: .asciiz "\t\t\-----JOGO DA FORCA-----\n\n"
+pontuacao: .asciiz "SCORE: "
 pede.letra: .asciiz "\n\n\nINFORME UMA LETRA: "
+mensagem1: .asciiz "PARABÉNS!! VOCÊ GANHOU"
+mensagem2: .asciiz "QUE PENA... TENTE OUTRA VEZ"
+mensagem3: .asciiz "UTILIZADAS: "
+mensagem4: .asciiz "A PALAVRA ERA: "
 tabulacao: .asciiz "\t\t\t  "
 traco: .asciiz "-"
+espaco: .asciiz " "
 vetorAUX: .space 50
 usadas: .space 50
 palavra: .space 50
 letra: .space 1
+mensagemAUX: .asciiz
+mensagemAUX2: .asciiz
 
 .text
 
@@ -110,6 +118,7 @@ li $v0, 4
 la $a0, pede.letra
 syscall
 
+#syscall para ler um único caractere
 li $v0, 8
 la $a0, letra
 syscall
@@ -121,10 +130,10 @@ li $s4, 0
 la $t3, vetorAUX
 
 verificaçao:
-bne $t8, $t2, proxima	#compara o byte lido com o byte da palavra escolhida, em sua atual posição de memória
+bne $t8, $s2, proxima	#compara o byte lido com o byte da palavra escolhida, em sua atual posição de memória
 
 certa:
-li $s1, 1
+li $s1, 0
 sb $t8, ($t3)		#guarda a letra lida no VetorAUX
 add $t2, $t2, 1
 add $t3, $t3, 1
@@ -152,9 +161,113 @@ lb $s2,($t2)
 lb $s3,($t3)
 
 utilizadas:
-blt $t7, 61, vitoria
+blt $t7, 61, Verifica_Fim
 add $t9, $t9, 1
 add $s7, $s7, 1
 lb $t7, ($s7)
 
-vitoria:
+Verifica_Fim:
+beq $s3, $s6, score	#compara o traço com o byte atual do vetorAUX
+beq $s4, $t5, fim1
+add $t3, $t3, 1
+lb $s3,($t3)
+add $s4, $s4, 1
+j Verifica_Fim
+
+score:
+bne $s1, 0, derrota
+
+scoreAUX:
+
+Imprime_repete:
+li $v0, 4
+la $a0, linha
+syscall
+
+li $v0, 4
+la $a0, tabulacao
+syscall
+
+li $v0, 4
+la $a0, vetorAUX
+syscall
+
+li $v0, 4
+la $a0, linha
+syscall
+
+li $v0, 4
+la $a0, mensagem3
+syscall
+
+li $v0, 4
+la $a0, usadas
+syscall
+
+li $v0, 4
+la $a0, linha
+syscall
+
+li $v0, 4
+la $a0, pontuacao
+syscall
+
+li $v0, 1
+move $a0, $s0
+syscall
+
+add $s7, $s7, 1
+j pedeLetra
+
+derrota:
+beq $s0, 0, fim2
+sub $s0, $s0, 1
+j scoreAUX
+
+fim1:
+li $v0, 4
+la $a0, linha
+syscall
+
+li $v0, 4
+la $a0, linha
+syscall
+
+li $v0, 59
+la $a0, mensagem1
+la $a1, mensagemAUX
+syscall
+
+li $v0, 10
+syscall
+
+fim2:
+li $v0, 4
+la $a0, linha
+syscall
+
+li $v0, 4
+la $a0, linha
+syscall
+
+li $v0, 59
+la $a0, mensagem2
+la $a1, mensagemAUX2
+syscall
+
+#imprime palavra errada, em caso de derrota
+#formatacao
+li $v0, 4
+la $a0, tabulacao
+syscall
+
+li $v0, 4
+la $a0, mensagem4
+syscall
+
+li $v0, 4
+la $a0, palavra
+syscall
+
+li $v0, 10
+syscall
