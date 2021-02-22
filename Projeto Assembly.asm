@@ -22,10 +22,10 @@ mensagemAUX2: .asciiz
 
 #=========================================ESCOLHER PALAVRA ALEATORIA DO ARQUIVO==========================================================
 
-#GERAR NUMERO ALEATORIO ENTRA AS 10 PALAVRAS
+#GERAR NUMERO ALEATORIO ENTRA AS 50 PALAVRAS
 li $v0, 42
 addi $a0, $a0, 1
-addi $a1, $a1, 10
+addi $a1, $a1, 50
 syscall
 # se for igual a 0, soma +1 para evitar loop infinito
 beq $a0, $zero, else
@@ -137,7 +137,7 @@ li $s1, 0
 sb $t8, ($t3)		#guarda a letra lida no VetorAUX
 add $t2, $t2, 1
 add $t3, $t3, 1
-lb $s2,($t2)		#linha 129-132: incrementa os endereços dos vetores e carrega o byte da atual posição pós-incremento
+lb $s2,($t2)		#linha 138-141: incrementa os endereços dos vetores e carrega o byte da atual posição pós-incremento
 lb $s3,($t3)
 add $s4, $s4, 1
 beq $s4, $t5, letras
