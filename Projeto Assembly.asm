@@ -160,11 +160,11 @@ la $t3, vetorAUX
 lb $s2,($t2)
 lb $s3,($t3)
 
-utilizadas:
-blt $t7, 61, Verifica_Fim
-add $t9, $t9, 1
-add $s7, $s7, 1
-lb $t7, ($s7)
+#utilizadas:
+#blt $t7, 64, Verifica_Fim	#tentativa falha de tratamento de erro com numeros e caracteres especiais
+#add $t9, $t9, 1
+#add $s7, $s7, 1
+#lb $t7, ($s7)
 
 Verifica_Fim:
 beq $s3, $s6, score	#compara o traço com o byte atual do vetorAUX
